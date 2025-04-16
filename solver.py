@@ -137,12 +137,12 @@ def put_shape(grid, shape, shape_id):
 
 def find_next_cell_with(grid, search=None):
     """
-    Returns the coordinates of the first free cell
+    Returns the coordinates of the first cell holding `search`
     """
     for line_no, line in enumerate(grid):
         try:
-            col = line.index(search)
-            return [line_no, col]
+            col_no = line.index(search)
+            return [line_no, col_no]
         except ValueError:
             pass
     return None
