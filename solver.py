@@ -144,7 +144,7 @@ def main():
     """
     perform the recursive search and then print the result
     """
-    pprint(recursive_search(GRID, PIECES))
+    print_grid(recursive_search(GRID, PIECES))
 
 
 def recursive_search(grid, available_pieces):
@@ -165,6 +165,13 @@ def recursive_search(grid, available_pieces):
             if (ret := recursive_search(w_grid, w_avail_pieces)) is not None:
                 return ret
     return None
+
+
+def print_grid(grid):
+    """
+    Print the grid on the screen on a human readable way
+    """
+    pprint(grid)
 
 
 class CantPut(Exception):
