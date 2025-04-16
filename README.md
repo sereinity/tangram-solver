@@ -43,6 +43,5 @@ Exemple of future developements:
   - Enter a date (today by default)
   - Don't stop at the first solution
   - Auto-run unittest
-- Simplify `put_shape()` (was written in a way for another global structure)
 - Let the algorithm compute all orientations for a piece shape
 - Run tests in CI
