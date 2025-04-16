@@ -5,20 +5,19 @@ Tangram infinte-calendar solver
 
 import copy
 import unittest
-from pprint import pprint
 
 GRID = [
-    [None, None, None,   -2, None, None],
+    [None, None, None,  '□', None, None],
     [None, None, None, None, None, None],
     [None, None, None, None, None, None, None],
     [None, None, None, None, None, None, None],
-    [None,   -2, None, None, None, None, None],
+    [None,  '□', None, None, None, None, None],
     [None, None, None, None, None, None, None],
     [None, None, None],
 ]
 
 PIECES = {
-    "black": {
+    "X": {
         "shapes": [
             ((1, 1, 0, 0), (0, 1, 1, 1)),
             ((0, 1), (1, 1), (1, 0), (1, 0)),
@@ -31,7 +30,7 @@ PIECES = {
             ((1, 0), (1, 1), (0, 1), (0, 1)),
         ],
     },
-    "blue": {
+    "−": {
         "shapes": [
             ((1, 0, 0, 0), (1, 1, 1, 1)),
             ((1, 1), (1, 0), (1, 0), (1, 0)),
@@ -44,13 +43,13 @@ PIECES = {
             ((1, 0), (1, 0), (1, 0), (1, 1)),
         ],
     },
-    "green": {
+    "■": {
         "shapes": [
             ((1, 1), (1, 1), (1, 1)),
             ((1, 1, 1), (1, 1, 1)),
         ],
     },
-    "orange": {
+    "●": {
         "shapes": [
             ((1, 1, 1), (1, 0, 1)),
             ((1, 1), (0, 1), (1, 1)),
@@ -58,7 +57,7 @@ PIECES = {
             ((1, 1), (1, 0), (1, 1)),
         ],
     },
-    "purple": {
+    "|": {
         "shapes": [
             ((1, 0), (1, 1), (1, 1)),
             ((1, 1, 1), (1, 1, 0)),
@@ -71,7 +70,7 @@ PIECES = {
             ((1, 1), (1, 1), (1, 0)),
         ],
     },
-    "red": {
+    "/": {
         "shapes": [
             ((1, 0, 0), (1, 1, 1), (0, 0, 1)),
             ((0, 1, 1), (0, 1, 0), (1, 1, 0)),
@@ -79,7 +78,7 @@ PIECES = {
             ((1, 1, 0), (0, 1, 0), (0, 1, 1)),
         ],
     },
-    "white": {
+    "▲": {
         "shapes": [
             ((1, 0, 0), (1, 0, 0), (1, 1, 1)),
             ((1, 1, 1), (1, 0, 0), (1, 0, 0)),
@@ -87,7 +86,7 @@ PIECES = {
             ((0, 0, 1), (0, 0, 1), (1, 1, 1)),
         ],
     },
-    "yellow": {
+    "H": {
         "shapes": [
             ((0, 1, 0, 0), (1, 1, 1, 1)),
             ((1, 0), (1, 1), (1, 0), (1, 0)),
@@ -171,7 +170,7 @@ def print_grid(grid):
     """
     Print the grid on the screen on a human readable way
     """
-    pprint(grid)
+    [print(' '.join(line)) for line in grid]
 
 
 class CantPut(Exception):

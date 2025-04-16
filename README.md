@@ -15,13 +15,13 @@ Then you can run the solver:
 
 ```bash
 ./solver.py
-[['black', 'black', 'black', -2, 'green', 'green'],
- ['blue', 'blue', 'black', 'black', 'green', 'green'],
- ['blue', 'white', 'white', 'white', 'green', 'green', 'yellow'],
- ['blue', 'red', 'red', 'white', 'orange', 'orange', 'yellow'],
- ['blue', -2, 'red', 'white', 'orange', 'yellow', 'yellow'],
- ['purple', 'purple', 'red', 'red', 'orange', 'orange', 'yellow'],
- ['purple', 'purple', 'purple']]
+X X X □ ■ ■
+− − X X ■ ■
+− ▲ ▲ ▲ ■ ■ H
+− / / ▲ ● ● H
+− □ / ▲ ● H H
+| | / / ● ● H
+| | |
 ```
 
 ## Contributing
@@ -38,7 +38,6 @@ Also as of today, the solver doesn't require any external dependency and no warn
 ## TODO
 
 Exemple of future developements:
-- Have an output more human readable
 - Add Arguments to:
   - Enter a date (today by default)
   - Don't stop at the first solution
