@@ -13,6 +13,14 @@ Then you can run the solver:
 
 ```bash
 ./solver.py
+Tangram infinte-calendar solver
+
+options:
+  -h, --help       show this help message and exit
+  --unittest, -u   run unittest instead of solving puzzle
+  --date, -d DATE  The date to print (example 2025-04-16)
+
+./solver.py
 X X X □ ■ ■
 − − X X ■ ■
 − ▲ ▲ ▲ ■ ■ H
@@ -37,7 +45,6 @@ Also as of today, the solver doesn't require any external dependency and no warn
 
 Exemple of future developements:
 - Add Arguments to:
-  - Enter a date (today by default)
   - Don't stop at the first solution
 - Let the algorithm compute all orientations for a piece shape
 - Run tests in CI

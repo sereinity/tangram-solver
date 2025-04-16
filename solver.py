@@ -151,11 +151,16 @@ def main():
         action='store_true',
         help='run unittest instead of solving puzzle'
     )
+    aparser.add_argument(
+        '--date', '-d',
+        type=lambda s: datetime.datetime.strptime(s, '%Y-%m-%d'),
+        help='The date to print (example 2025-04-16, today by default)'
+    )
     args = aparser.parse_args()
     if args.unittest:
         unittest.main(argv=['unittest'])
     else:
-        date = datetime.date.today()
+        date = args.date if args.date else datetime.date.today()
         grid = copy.deepcopy(GRID)
         mark_date(grid, date)
         print_grid(recursive_search(grid, PIECES))
