@@ -4,15 +4,16 @@ Tangram infinte-calendar solver
 """
 
 import copy
+import datetime
 import unittest
 from argparse import ArgumentParser
 
 GRID = [
-    [None, None, None,  '□', None, None],
+    [None, None, None, None, None, None],
     [None, None, None, None, None, None],
     [None, None, None, None, None, None, None],
     [None, None, None, None, None, None, None],
-    [None,  '□', None, None, None, None, None],
+    [None, None, None, None, None, None, None],
     [None, None, None, None, None, None, None],
     [None, None, None],
 ]
@@ -154,7 +155,10 @@ def main():
     if args.unittest:
         unittest.main(argv=['unittest'])
     else:
-        print_grid(recursive_search(GRID, PIECES))
+        date = datetime.date.today()
+        grid = copy.deepcopy(GRID)
+        mark_date(grid, date)
+        print_grid(recursive_search(grid, PIECES))
 
 
 def recursive_search(grid, available_pieces):
@@ -175,6 +179,17 @@ def recursive_search(grid, available_pieces):
             if (ret := recursive_search(w_grid, w_avail_pieces)) is not None:
                 return ret
     return None
+
+
+def mark_date(grid, date):
+    """
+    Return the grid with given month and day reserved
+    """
+    (line, col) = divmod(date.month-1, 6)
+    grid[line][col] = '□'
+    (line, col) = divmod(date.day-1, 7)
+    grid[line+2][col] = '□'
+    return grid
 
 
 def print_grid(grid):

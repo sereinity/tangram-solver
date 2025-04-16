@@ -9,8 +9,6 @@ The exact calendar shape, pieces shape and their colors may change between editi
 
 ## Usage
 
-As of today, you need to edit the `GRID` in `solver.py` to mark reserved cells for the day (put something else than `None`).
-
 Then you can run the solver:
 
 ```bash
