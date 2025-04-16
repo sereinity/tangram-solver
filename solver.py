@@ -7,6 +7,16 @@ import copy
 import unittest
 from pprint import pprint
 
+GRID = [
+    [None, None, None,   -2, None, None],
+    [None, None, None, None, None, None],
+    [None, None, None, None, None, None, None],
+    [None, None, None, None, None, None, None],
+    [None,   -2, None, None, None, None, None],
+    [None, None, None, None, None, None, None],
+    [None, None, None],
+]
+
 PIECES = {
     "black": {
         "shapes": [
@@ -91,16 +101,6 @@ PIECES = {
         ],
     },
 }
-
-GRID = [
-    [None, None, None,   -2, None, None],
-    [None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None,   -2, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None],
-]
 
 
 def put_shape(grid, shape, shape_id):
@@ -224,7 +224,6 @@ class ShapeTest(unittest.TestCase):
             grid,
         )
 
-    # @unittest.skip("working on it")
     def test_can_put_strange(self):
         """
         Test that the piece with an empty first cell in shape can fit
