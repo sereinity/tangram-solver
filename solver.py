@@ -164,16 +164,16 @@ def main():
         date = args.date if args.date else datetime.date.today()
         grid = copy.deepcopy(GRID)
         mark_date(grid, date)
-        context = {
-            'results_count': 0,
-            'should_stop': not args.all,
-        }
-        recursive_search(grid, PIECES, context)
-        if not context['should_stop']:
-            print("Found %d solutions" % (context['results_count']))
+        if args.all:
+            item_id = 0
+            for item_id, solution in enumerate(recursive_search(grid, PIECES)):
+                print_grid(solution)
+            print(f"Found {item_id+1} solutions")
+        else:
+            print_grid(next(recursive_search(grid, PIECES)))
 
 
-def recursive_search(grid, available_pieces, context):
+def recursive_search(grid, available_pieces):
     """
     recursively search for a solution
     """
@@ -187,14 +187,9 @@ def recursive_search(grid, available_pieces, context):
             w_avail_pieces = available_pieces.copy()
             del w_avail_pieces[p_id]
             if find_next_cell_with(w_grid) is None:
-                print_grid(w_grid)
-                context['results_count'] += 1
-                if context['should_stop']:
-                    return w_grid
-            rec_result = recursive_search(w_grid, w_avail_pieces, context)
-            if rec_result is not None:
-                return rec_result
-    return None
+                yield w_grid
+                continue
+            yield from recursive_search(w_grid, w_avail_pieces)
 
 
 def mark_date(grid, date):
