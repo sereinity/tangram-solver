@@ -18,7 +18,8 @@ Tangram infinte-calendar solver
 options:
   -h, --help       show this help message and exit
   --unittest, -u   run unittest instead of solving puzzle
-  --date, -d DATE  The date to print (example 2025-04-16)
+  --date, -d DATE  The date to print (example 2025-04-16, today by default)
+  --all, -a        activate to search for all solutions
 
 ./solver.py
 -------------
