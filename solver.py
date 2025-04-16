@@ -8,15 +8,11 @@ import datetime
 import unittest
 from argparse import ArgumentParser
 
-GRID = [
-    [None, None, None, None, None, None],
-    [None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None, None, None, None, None],
-    [None, None, None],
-]
+GRID = (
+    [[None] * 6 for _ in range(0, 2)] +
+    [[None] * 7 for _ in range(2, 6)] +
+    [[None] * 3]
+)
 
 PIECES = {
     "X": {
