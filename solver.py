@@ -156,6 +156,11 @@ def main():
         type=lambda s: datetime.datetime.strptime(s, '%Y-%m-%d'),
         help='The date to print (example 2025-04-16, today by default)'
     )
+    aparser.add_argument(
+        '--all', '-a',
+        action='store_true',
+        help='activate to search for all solutions',
+    )
     args = aparser.parse_args()
     if args.unittest:
         unittest.main(argv=['unittest'])
@@ -163,10 +168,16 @@ def main():
         date = args.date if args.date else datetime.date.today()
         grid = copy.deepcopy(GRID)
         mark_date(grid, date)
-        print_grid(recursive_search(grid, PIECES))
+        context = {
+            'results_count': 0,
+            'should_stop': not args.all,
+        }
+        recursive_search(grid, PIECES, context)
+        if not context['should_stop']:
+            print("Found %d solutions" % (context['results_count']))
 
 
-def recursive_search(grid, available_pieces):
+def recursive_search(grid, available_pieces, context):
     """
     recursively search for a solution
     """
@@ -180,9 +191,13 @@ def recursive_search(grid, available_pieces):
             w_avail_pieces = available_pieces.copy()
             del w_avail_pieces[p_id]
             if find_next_cell_with(w_grid) is None:
-                return w_grid
-            if (ret := recursive_search(w_grid, w_avail_pieces)) is not None:
-                return ret
+                print_grid(w_grid)
+                context['results_count'] += 1
+                if context['should_stop']:
+                    return w_grid
+            rec_result = recursive_search(w_grid, w_avail_pieces, context)
+            if rec_result is not None:
+                return rec_result
     return None
 
 
@@ -201,6 +216,7 @@ def print_grid(grid):
     """
     Print the grid on the screen on a human readable way
     """
+    print(''.join(['-']*13))
     [print(' '.join(line)) for line in grid]
 
 

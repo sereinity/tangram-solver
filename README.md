@@ -21,6 +21,7 @@ options:
   --date, -d DATE  The date to print (example 2025-04-16)
 
 ./solver.py
+-------------
 X X X □ ■ ■
 − − X X ■ ■
 − ▲ ▲ ▲ ■ ■ H
@@ -44,7 +45,5 @@ Also as of today, the solver doesn't require any external dependency and no warn
 ## TODO
 
 Exemple of future developements:
-- Add Arguments to:
-  - Don't stop at the first solution
 - Let the algorithm compute all orientations for a piece shape
 - Run tests in CI
