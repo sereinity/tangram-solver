@@ -5,6 +5,7 @@ Tangram infinte-calendar solver
 
 import copy
 import unittest
+from argparse import ArgumentParser
 
 GRID = [
     [None, None, None,  '□', None, None],
@@ -143,7 +144,17 @@ def main():
     """
     perform the recursive search and then print the result
     """
-    print_grid(recursive_search(GRID, PIECES))
+    aparser = ArgumentParser(description=__doc__)
+    aparser.add_argument(
+        '--unittest', '-u',
+        action='store_true',
+        help='run unittest instead of solving puzzle'
+    )
+    args = aparser.parse_args()
+    if args.unittest:
+        unittest.main(argv=['unittest'])
+    else:
+        print_grid(recursive_search(GRID, PIECES))
 
 
 def recursive_search(grid, available_pieces):

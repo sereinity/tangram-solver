@@ -29,7 +29,7 @@ X X X □ ■ ■
 Some tests have already been integrated. You can run them with:
 
 ```bash
-python -m unittest solver.py
+./solver.py --unittest
 ```
 
 Also as of today, the solver doesn't require any external dependency and no warning are generated neither by `flakes8`, `pylint` nor `ruff`.
@@ -41,6 +41,5 @@ Exemple of future developements:
 - Add Arguments to:
   - Enter a date (today by default)
   - Don't stop at the first solution
-  - Auto-run unittest
 - Let the algorithm compute all orientations for a piece shape
 - Run tests in CI
