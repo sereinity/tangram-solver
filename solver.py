@@ -7,6 +7,7 @@ import copy
 import datetime
 import unittest
 from argparse import ArgumentParser
+from collections import deque
 
 GRID = (
     [[None] * 6 for _ in range(0, 2)] +
@@ -208,7 +209,7 @@ def print_grid(grid):
     Print the grid on the screen on a human readable way
     """
     print(''.join(['-']*13))
-    [print(' '.join(line)) for line in grid]
+    deque(map(lambda x: print(' '.join(x)), grid))
 
 
 class CantPut(Exception):
