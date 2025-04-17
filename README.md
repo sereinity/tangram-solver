@@ -46,5 +46,4 @@ Also as of today, the solver doesn't require any external dependency and no warn
 ## TODO
 
 Exemple of future developements:
-- Let the algorithm compute all orientations for a piece shape
 - Run tests in CI

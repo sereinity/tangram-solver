@@ -9,97 +9,6 @@ import unittest
 from argparse import ArgumentParser
 from collections import deque
 
-GRID = (
-    [[None] * 6 for _ in range(0, 2)] +
-    [[None] * 7 for _ in range(2, 6)] +
-    [[None] * 3]
-)
-
-PIECES = {
-    "X": {
-        "shapes": [
-            ((1, 1, 0, 0), (0, 1, 1, 1)),
-            ((0, 1), (1, 1), (1, 0), (1, 0)),
-            ((1, 1, 1, 0), (0, 0, 1, 1)),
-            ((0, 1), (0, 1), (1, 1), (1, 0)),
-            # after the flip
-            ((0, 0, 1, 1), (1, 1, 1, 0)),
-            ((1, 0), (1, 0), (1, 1), (0, 1)),
-            ((0, 1, 1, 1), (1, 1, 0, 0)),
-            ((1, 0), (1, 1), (0, 1), (0, 1)),
-        ],
-    },
-    "−": {
-        "shapes": [
-            ((1, 0, 0, 0), (1, 1, 1, 1)),
-            ((1, 1), (1, 0), (1, 0), (1, 0)),
-            ((1, 1, 1, 1), (0, 0, 0, 1)),
-            ((0, 1), (0, 1), (0, 1), (1, 1)),
-            # after the flip
-            ((1, 1, 1, 1), (1, 0, 0, 0)),
-            ((1, 1), (0, 1), (0, 1), (0, 1)),
-            ((0, 0, 0, 1), (1, 1, 1, 1)),
-            ((1, 0), (1, 0), (1, 0), (1, 1)),
-        ],
-    },
-    "■": {
-        "shapes": [
-            ((1, 1), (1, 1), (1, 1)),
-            ((1, 1, 1), (1, 1, 1)),
-        ],
-    },
-    "●": {
-        "shapes": [
-            ((1, 1, 1), (1, 0, 1)),
-            ((1, 1), (0, 1), (1, 1)),
-            ((1, 0, 1), (1, 1, 1)),
-            ((1, 1), (1, 0), (1, 1)),
-        ],
-    },
-    "|": {
-        "shapes": [
-            ((1, 0), (1, 1), (1, 1)),
-            ((1, 1, 1), (1, 1, 0)),
-            ((1, 1), (1, 1), (0, 1)),
-            ((0, 1, 1), (1, 1, 1)),
-            # after the flip
-            ((1, 1, 1), (0, 1, 1)),
-            ((0, 1), (1, 1), (1, 1)),
-            ((1, 1, 0), (1, 1, 1)),
-            ((1, 1), (1, 1), (1, 0)),
-        ],
-    },
-    "/": {
-        "shapes": [
-            ((1, 0, 0), (1, 1, 1), (0, 0, 1)),
-            ((0, 1, 1), (0, 1, 0), (1, 1, 0)),
-            ((0, 0, 1), (1, 1, 1), (1, 0, 0)),
-            ((1, 1, 0), (0, 1, 0), (0, 1, 1)),
-        ],
-    },
-    "▲": {
-        "shapes": [
-            ((1, 0, 0), (1, 0, 0), (1, 1, 1)),
-            ((1, 1, 1), (1, 0, 0), (1, 0, 0)),
-            ((1, 1, 1), (0, 0, 1), (0, 0, 1)),
-            ((0, 0, 1), (0, 0, 1), (1, 1, 1)),
-        ],
-    },
-    "H": {
-        "shapes": [
-            ((0, 1, 0, 0), (1, 1, 1, 1)),
-            ((1, 0), (1, 1), (1, 0), (1, 0)),
-            ((1, 1, 1, 1), (0, 0, 1, 0)),
-            ((0, 1), (0, 1), (1, 1), (0, 1)),
-            # after the flip
-            ((1, 1, 1, 1), (0, 1, 0, 0)),
-            ((0, 1), (1, 1), (0, 1), (0, 1)),
-            ((0, 0, 1, 0), (1, 1, 1, 1)),
-            ((1, 0), (1, 0), (1, 1), (1, 0)),
-        ],
-    },
-}
-
 
 def put_shape(grid, shape, shape_id):
     """
@@ -178,15 +87,15 @@ def recursive_search(grid, available_pieces):
     """
     recursively search for a solution
     """
-    for p_id, piece in available_pieces.items():
-        for shape in piece['shapes']:
+    for piece in available_pieces:
+        for shape in piece.orientations:
             w_grid = copy.deepcopy(grid)
             try:
-                put_shape(w_grid, shape, p_id)
+                put_shape(w_grid, shape, piece.repr)
             except CantPut:
                 continue
             w_avail_pieces = available_pieces.copy()
-            del w_avail_pieces[p_id]
+            w_avail_pieces.remove(piece)
             if find_next_cell_with(w_grid) is None:
                 yield w_grid
                 continue
@@ -218,6 +127,44 @@ class CantPut(Exception):
     """
 
 
+class Piece:
+    """
+    Piece representation, useful to manipulate it
+    """
+
+    def __init__(self, shape, prepr):
+        self.shape = shape
+        self.repr = prepr
+        self.orientations = set()
+        self._generate_orientations()
+
+    def _generate_orientations(self):
+        """
+        Compute all possible orientation (flip included) simplify it
+        and store it into the object
+        """
+        orientations = [self.shape]
+        for _ in range(0, 3):
+            orientations.append(self.rotate(orientations[-1]))
+        orientations.append(self.flip())
+        for _ in range(0, 3):
+            orientations.append(self.rotate(orientations[-1]))
+        self.orientations = set(orientations)
+
+    def flip(self):
+        """
+        Get the current piece in a reversed state
+        """
+        return tuple(reversed(self.shape))
+
+    @staticmethod
+    def rotate(shape):
+        """
+        returns a rotated (90°) version of the given shape
+        """
+        return tuple(zip(*shape[::-1]))
+
+
 class ShapeTest(unittest.TestCase):
     """
     Test that all pieces have a correct shape
@@ -240,14 +187,6 @@ class ShapeTest(unittest.TestCase):
         """
         grid = [[1, 2, 1, 1], [1, 2, 1, 1]]
         self.assertEqual(find_next_cell_with(grid), None)
-
-    def test_all_piece_have_constent_size(self):
-        """
-        Test that all pieces doen't change their size
-        """
-        self.assertEqual(
-            all(map(self._test_constent_size, PIECES.values())),
-            True)
 
     def test_can_put(self):
         """
@@ -283,13 +222,28 @@ class ShapeTest(unittest.TestCase):
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Not free cell", [1, 3]))
 
-    def _test_constent_size(self, piece):
+    def test_flip(self):
         """
-        Test that the size of a piece doesn't change
+        the flip produces a wanted result
         """
-        return (len(set(map(self._get_aera_size, piece["shapes"]))) <= 1) and (
-            len(set(map(self._get_aera_shape_size, piece["shapes"]))) <= 1
+        piece = Piece(((0, 1, 1, 0), (1, 1, 0, 0), (0, 1, 1, 1),), 'x')
+        self.assertEqual(
+            piece.flip(),
+            ((0, 1, 1, 1), (1, 1, 0, 0), (0, 1, 1, 0)),
         )
+
+    def test_four_rotate(self):
+        """
+        rotating four times a piece should give the initial state
+        """
+        piece = Piece(((0, 1, 1, 0), (1, 1, 0, 0), (0, 1, 1, 1),), 'x')
+        first_rotate = piece.rotate(piece.shape)
+        self.assertEqual(
+            first_rotate,
+            ((0, 1, 0), (1, 1, 1), (1, 0, 1), (1, 0, 0)),
+        )
+        last_rotate = piece.rotate(piece.rotate(piece.rotate(first_rotate)))
+        self.assertEqual(last_rotate, piece.shape)
 
     @staticmethod
     def _get_aera_size(piece_shape):
@@ -304,6 +258,24 @@ class ShapeTest(unittest.TestCase):
         get the area size of a shape
         """
         return sum(map(len, piece_shape))
+
+
+GRID = (
+    [[None] * 6 for _ in range(0, 2)] +
+    [[None] * 7 for _ in range(2, 6)] +
+    [[None] * 3]
+)
+
+PIECES = [
+    Piece(((1, 1, 0, 0), (0, 1, 1, 1)), "X"),
+    Piece(((1, 0, 0, 0), (1, 1, 1, 1)), "-"),
+    Piece(((1, 1), (1, 1), (1, 1)), "■"),
+    Piece(((1, 1, 1), (1, 0, 1)), "●"),
+    Piece(((1, 0), (1, 1), (1, 1)), "|"),
+    Piece(((1, 0, 0), (1, 1, 1), (0, 0, 1)), "/"),
+    Piece(((1, 0, 0), (1, 0, 0), (1, 1, 1)), "▲"),
+    Piece(((0, 1, 0, 0), (1, 1, 1, 1)), "H"),
+]
 
 
 if __name__ == "__main__":
