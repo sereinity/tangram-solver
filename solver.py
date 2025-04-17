@@ -200,7 +200,7 @@ class ShapeTest(unittest.TestCase):
             grid,
         )
 
-    def test_can_put_strange(self):
+    def test_can_put_with_blank(self):
         """
         Test that the piece with an empty first cell in shape can fit
         """
