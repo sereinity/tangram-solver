@@ -12,7 +12,7 @@ The exact calendar shape, pieces shape and their colors may change between editi
 Then you can run the solver:
 
 ```bash
-./solver.py
+./solver.py --help
 Tangram infinte-calendar solver
 
 options:
