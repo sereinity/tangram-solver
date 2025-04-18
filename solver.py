@@ -53,12 +53,6 @@ def main():
     """
     aparser = ArgumentParser(description=__doc__)
     aparser.add_argument(
-        "--unittest",
-        "-u",
-        action="store_true",
-        help="run unittest instead of solving puzzle",
-    )
-    aparser.add_argument(
         "--date",
         "-d",
         type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),

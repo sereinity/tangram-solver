@@ -1,5 +1,13 @@
 [tool.ruff]
-line-length = 80
+line-length = 79
 
 [tool.ruff.lint]
 select = ["E", "F", "PL", "I"]
+
+[tool.coverage.report]
+fail_under = 80
+
+[tool.coverage.run]
+branch = true
+include = ["solver.py"]
+command_line = "-m unittest solver.py"

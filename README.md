@@ -17,7 +17,6 @@ Tangram infinte-calendar solver
 
 options:
   -h, --help       show this help message and exit
-  --unittest, -u   run unittest instead of solving puzzle
   --date, -d DATE  The date to print (example 2025-04-16, today by default)
   --all, -a        activate to search for all solutions
 
@@ -37,7 +36,13 @@ X X X □ ■ ■
 Some tests have already been integrated. You can run them with:
 
 ```bash
-./solver.py --unittest
+coverage run
+coverage report
+Name        Stmts   Miss Branch BrPart  Cover
+---------------------------------------------
+solver.py     180      1     28      1    99%
+---------------------------------------------
+TOTAL         180      1     28      1    99%
 ```
 
 Also as of today, the solver doesn't require any external dependency and no warning are generated neither by `ruff`.
