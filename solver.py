@@ -5,9 +5,13 @@ Tangram infinte-calendar solver
 
 import copy
 import datetime
+import sys
 import unittest
 from argparse import ArgumentParser
 from collections import deque
+from contextlib import contextmanager
+from io import StringIO
+from unittest.mock import patch
 
 
 def put_shape(grid, shape, shape_id):
@@ -51,6 +55,23 @@ def main():
     """
     perform the recursive search and then print the result
     """
+    args = parse_args()
+    date = args.date if args.date else datetime.date.today()
+    grid = copy.deepcopy(GRID)
+    mark_date(grid, date)
+    if args.all:
+        item_id = 0
+        for item_id, solution in enumerate(recursive_search(grid, PIECES)):
+            print_grid(solution)
+        print(f"Found {item_id + 1} solutions")
+    else:
+        print_grid(next(recursive_search(grid, PIECES)))
+
+
+def parse_args(args=None):
+    """
+    Create argument parser and return the Namespace object
+    """
     aparser = ArgumentParser(description=__doc__)
     aparser.add_argument(
         "--date",
@@ -64,20 +85,7 @@ def main():
         action="store_true",
         help="activate to search for all solutions",
     )
-    args = aparser.parse_args()
-    if args.unittest:
-        unittest.main(argv=["unittest"])
-    else:
-        date = args.date if args.date else datetime.date.today()
-        grid = copy.deepcopy(GRID)
-        mark_date(grid, date)
-        if args.all:
-            item_id = 0
-            for item_id, solution in enumerate(recursive_search(grid, PIECES)):
-                print_grid(solution)
-            print(f"Found {item_id + 1} solutions")
-        else:
-            print_grid(next(recursive_search(grid, PIECES)))
+    return aparser.parse_args(args)
 
 
 def recursive_search(grid, available_pieces):
@@ -95,7 +103,6 @@ def recursive_search(grid, available_pieces):
             w_avail_pieces.remove(piece)
             if find_next_cell_with(w_grid) is None:
                 yield w_grid
-                continue
             yield from recursive_search(w_grid, w_avail_pieces)
 
 
@@ -209,6 +216,17 @@ class ShapeTest(unittest.TestCase):
             grid,
         )
 
+    def test_cannot_put_with_negative_offset(self):
+        """
+        Test that the piece with an empty first cell can't be put in first
+        column
+        """
+        grid = [[None, None, None, None], [None, None, None, None]]
+        shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
+        with self.assertRaises(CantPut) as exp:
+            put_shape(grid, shape, "x")
+        self.assertEqual(exp.exception.args, ("Out of bound",))
+
     def test_cant_put(self):
         """
         Test that the piece can't fit and is rejected
@@ -218,6 +236,16 @@ class ShapeTest(unittest.TestCase):
         with self.assertRaises(CantPut) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Not free cell", [1, 3]))
+
+    def test_cant_put_outside(self):
+        """
+        Test that the piece can't be placed outside of the grid
+        """
+        grid = [[None, None, None], [None, None, None]]
+        shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
+        with self.assertRaises(CantPut) as cp:
+            put_shape(grid, shape, "x")
+        self.assertEqual(cp.exception.args, ("Out of bound",))
 
     def test_flip(self):
         """
@@ -256,19 +284,88 @@ class ShapeTest(unittest.TestCase):
         last_rotate = piece.rotate(piece.rotate(piece.rotate(first_rotate)))
         self.assertEqual(last_rotate, piece.shape)
 
-    @staticmethod
-    def _get_aera_size(piece_shape):
-        """
-        get the area size of a piece
-        """
-        return sum(map(sum, piece_shape))
 
-    @staticmethod
-    def _get_aera_shape_size(piece_shape):
+class MainTest(unittest.TestCase):
+    """
+    Run tests on the main process
+    """
+
+    def test_mark_date(self):
         """
-        get the area size of a shape
+        Test that we can mark april the 18th
         """
-        return sum(map(len, piece_shape))
+        grid = mark_date(copy.deepcopy(GRID), datetime.date(2025, 4, 18))
+        self.assertEqual(
+            grid,
+            [
+                [None, None, None, "□", None, None],
+                [None, None, None, None, None, None],
+                [None, None, None, None, None, None, None],
+                [None, None, None, None, None, None, None],
+                [None, None, None, "□", None, None, None],
+                [None, None, None, None, None, None, None],
+                [None, None, None],
+            ],
+        )
+
+    def test_parse_args(self):
+        args = parse_args(["--date", "2025-04-17"])
+        self.assertEqual(args.all, False)
+        self.assertEqual(args.date, datetime.datetime(2025, 4, 17))
+
+    def test_resolve_one(self):
+        """
+        resolve a specific grid
+        """
+        date = datetime.date(2025, 4, 18)
+        grid = copy.deepcopy(GRID)
+        mark_date(grid, date)
+        solution = next(recursive_search(grid, PIECES))
+        self.assertEqual(
+            solution,
+            [
+                ["X", "X", "X", "□", "/", "/"],
+                ["-", "-", "X", "X", "▲", "/"],
+                ["-", "●", "●", "●", "▲", "/", "/"],
+                ["-", "●", "H", "●", "▲", "▲", "▲"],
+                ["-", "|", "H", "□", "■", "■", "■"],
+                ["|", "|", "H", "H", "■", "■", "■"],
+                ["|", "|", "H"],
+            ],
+        )
+
+    @patch("argparse._sys.argv", ["solver.py", "--date", "2025-04-17"])
+    def test_full_run_single_grid(self):
+        """
+        Test that we can get a grid solution
+        """
+        with captured_output() as (out, err):
+            main()
+        self.assertEqual(err.getvalue(), "")
+        self.assertEqual(len(out.getvalue().splitlines()), 8)
+
+    @patch(
+        "argparse._sys.argv", ["solver.py", "--all", "--date", "2025-04-17"]
+    )
+    def test_full_run_all_grids(self):
+        """
+        Test that we can get a grid solution
+        """
+        with captured_output() as (out, err):
+            main()
+        self.assertEqual(err.getvalue(), "")
+        self.assertEqual(out.getvalue().splitlines()[-1], "Found 62 solutions")
+
+
+@contextmanager
+def captured_output():
+    new_out, new_err = StringIO(), StringIO()
+    old_out, old_err = sys.stdout, sys.stderr
+    try:
+        sys.stdout, sys.stderr = new_out, new_err
+        yield sys.stdout, sys.stderr
+    finally:
+        sys.stdout, sys.stderr = old_out, old_err
 
 
 GRID = (
