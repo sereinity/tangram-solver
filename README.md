@@ -50,9 +50,3 @@ Also as of today, the solver doesn't require any external dependency and no warn
 ```bash
 ruff check
 ```
-
-
-## TODO
-
-Exemple of future developements:
-- Run tests in CI
