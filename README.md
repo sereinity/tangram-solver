@@ -40,7 +40,11 @@ Some tests have already been integrated. You can run them with:
 ./solver.py --unittest
 ```
 
-Also as of today, the solver doesn't require any external dependency and no warning are generated neither by `flakes8`, `pylint` nor `ruff`.
+Also as of today, the solver doesn't require any external dependency and no warning are generated neither by `ruff`.
+
+```bash
+ruff check
+```
 
 
 ## TODO
