@@ -53,23 +53,26 @@ def main():
     """
     aparser = ArgumentParser(description=__doc__)
     aparser.add_argument(
-        '--unittest', '-u',
-        action='store_true',
-        help='run unittest instead of solving puzzle'
+        "--unittest",
+        "-u",
+        action="store_true",
+        help="run unittest instead of solving puzzle",
     )
     aparser.add_argument(
-        '--date', '-d',
-        type=lambda s: datetime.datetime.strptime(s, '%Y-%m-%d'),
-        help='The date to print (example 2025-04-16, today by default)'
+        "--date",
+        "-d",
+        type=lambda s: datetime.datetime.strptime(s, "%Y-%m-%d"),
+        help="The date to print (example 2025-04-16, today by default)",
     )
     aparser.add_argument(
-        '--all', '-a',
-        action='store_true',
-        help='activate to search for all solutions',
+        "--all",
+        "-a",
+        action="store_true",
+        help="activate to search for all solutions",
     )
     args = aparser.parse_args()
     if args.unittest:
-        unittest.main(argv=['unittest'])
+        unittest.main(argv=["unittest"])
     else:
         date = args.date if args.date else datetime.date.today()
         grid = copy.deepcopy(GRID)
@@ -78,7 +81,7 @@ def main():
             item_id = 0
             for item_id, solution in enumerate(recursive_search(grid, PIECES)):
                 print_grid(solution)
-            print(f"Found {item_id+1} solutions")
+            print(f"Found {item_id + 1} solutions")
         else:
             print_grid(next(recursive_search(grid, PIECES)))
 
@@ -106,10 +109,10 @@ def mark_date(grid, date):
     """
     Return the grid with given month and day reserved
     """
-    (line, col) = divmod(date.month-1, 6)
-    grid[line][col] = '□'
-    (line, col) = divmod(date.day-1, 7)
-    grid[line+2][col] = '□'
+    (line, col) = divmod(date.month - 1, 6)
+    grid[line][col] = "□"
+    (line, col) = divmod(date.day - 1, 7)
+    grid[line + 2][col] = "□"
     return grid
 
 
@@ -117,8 +120,8 @@ def print_grid(grid):
     """
     Print the grid on the screen on a human readable way
     """
-    print(''.join(['-']*13))
-    deque(map(lambda x: print(' '.join(x)), grid))
+    print("".join(["-"] * 13))
+    deque(map(lambda x: print(" ".join(x)), grid))
 
 
 class CantPut(Exception):
@@ -226,7 +229,14 @@ class ShapeTest(unittest.TestCase):
         """
         the flip produces a wanted result
         """
-        piece = Piece(((0, 1, 1, 0), (1, 1, 0, 0), (0, 1, 1, 1),), 'x')
+        piece = Piece(
+            (
+                (0, 1, 1, 0),
+                (1, 1, 0, 0),
+                (0, 1, 1, 1),
+            ),
+            "x",
+        )
         self.assertEqual(
             piece.flip(),
             ((0, 1, 1, 1), (1, 1, 0, 0), (0, 1, 1, 0)),
@@ -236,7 +246,14 @@ class ShapeTest(unittest.TestCase):
         """
         rotating four times a piece should give the initial state
         """
-        piece = Piece(((0, 1, 1, 0), (1, 1, 0, 0), (0, 1, 1, 1),), 'x')
+        piece = Piece(
+            (
+                (0, 1, 1, 0),
+                (1, 1, 0, 0),
+                (0, 1, 1, 1),
+            ),
+            "x",
+        )
         first_rotate = piece.rotate(piece.shape)
         self.assertEqual(
             first_rotate,
@@ -261,9 +278,9 @@ class ShapeTest(unittest.TestCase):
 
 
 GRID = (
-    [[None] * 6 for _ in range(0, 2)] +
-    [[None] * 7 for _ in range(2, 6)] +
-    [[None] * 3]
+    [[None] * 6 for _ in range(0, 2)]
+    + [[None] * 7 for _ in range(2, 6)]
+    + [[None] * 3]
 )
 
 PIECES = [
