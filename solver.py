@@ -3,11 +3,11 @@
 Tangram infinte-calendar solver.
 """
 
+import argparse
 import copy
 import datetime
 import sys
 import unittest
-from argparse import ArgumentParser
 from collections import deque
 from contextlib import contextmanager
 from io import StringIO
@@ -84,11 +84,11 @@ def main() -> None:
         print_grid(next(recursive_search(grid, pieces)))
 
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     """
     Create argument parser and return the Namespace object.
     """
-    aparser = ArgumentParser(description=__doc__)
+    aparser = argparse.ArgumentParser(description=__doc__)
     aparser.add_argument(
         "--date",
         "-d",
