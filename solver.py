@@ -15,7 +15,7 @@ from random import shuffle
 from unittest.mock import patch
 
 
-def put_shape(grid, shape, shape_id):
+def put_shape(grid, shape, shape_id) -> None:
     """
     Put the shape in the first free grid position.
     """
@@ -52,7 +52,7 @@ def find_next_cell_with(grid, search=None):
     return None
 
 
-def main():
+def main() -> None:
     """
     Perform the recursive search and then print the result.
     """
@@ -120,7 +120,7 @@ def mark_date(grid, date):
     return grid
 
 
-def print_grid(grid):
+def print_grid(grid) -> None:
     """
     Print the grid on the screen on a human readable way.
     """
@@ -139,13 +139,13 @@ class Piece:
     Piece representation, useful to manipulate it.
     """
 
-    def __init__(self, shape, prepr):
+    def __init__(self, shape, prepr) -> None:
         self.shape = shape
         self.repr = prepr
         self.orientations = set()
         self._generate_orientations()
 
-    def _generate_orientations(self):
+    def _generate_orientations(self) -> None:
         """
         Compute all possible orientation (flip included) simplify it
         and store it into the object.
@@ -177,7 +177,7 @@ class ShapeTest(unittest.TestCase):
     Test that all pieces have a correct shape.
     """
 
-    def test_find_free_cell(self):
+    def test_find_free_cell(self) -> None:
         """
         Test we can find free cell in grids.
         """
@@ -188,14 +188,14 @@ class ShapeTest(unittest.TestCase):
         grid = [[1, 1, 1, 1], [1, None, None, None]]
         self.assertListEqual(find_next_cell_with(grid), [1, 1])
 
-    def test_cant_find_free_cell(self):
+    def test_cant_find_free_cell(self) -> None:
         """
         Test we can't find free cell in full grids.
         """
         grid = [[1, 2, 1, 1], [1, 2, 1, 1]]
         self.assertEqual(find_next_cell_with(grid), None)
 
-    def test_can_put(self):
+    def test_can_put(self) -> None:
         """
         Test that the piece can fit.
         """
@@ -207,7 +207,7 @@ class ShapeTest(unittest.TestCase):
             grid,
         )
 
-    def test_can_put_with_blank(self):
+    def test_can_put_with_blank(self) -> None:
         """
         Test that the piece with an empty first cell in shape can fit.
         """
@@ -219,7 +219,7 @@ class ShapeTest(unittest.TestCase):
             grid,
         )
 
-    def test_cannot_put_with_negative_offset(self):
+    def test_cannot_put_with_negative_offset(self) -> None:
         """
         Test that the piece with an empty first cell can't be put in first
         column.
@@ -230,7 +230,7 @@ class ShapeTest(unittest.TestCase):
             put_shape(grid, shape, "x")
         self.assertEqual(exp.exception.args, ("Out of bound",))
 
-    def test_cant_put(self):
+    def test_cant_put(self) -> None:
         """
         Test that the piece can't fit and is rejected.
         """
@@ -240,7 +240,7 @@ class ShapeTest(unittest.TestCase):
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Not free cell", [1, 3]))
 
-    def test_cant_put_outside(self):
+    def test_cant_put_outside(self) -> None:
         """
         Test that the piece can't be placed outside of the grid.
         """
@@ -250,7 +250,7 @@ class ShapeTest(unittest.TestCase):
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Out of bound",))
 
-    def test_flip(self):
+    def test_flip(self) -> None:
         """
         The flip produces a wanted result.
         """
@@ -267,7 +267,7 @@ class ShapeTest(unittest.TestCase):
             ((0, 1, 1, 1), (1, 1, 0, 0), (0, 1, 1, 0)),
         )
 
-    def test_four_rotate(self):
+    def test_four_rotate(self) -> None:
         """
         Rotating four times a piece should give the initial state.
         """
@@ -293,7 +293,7 @@ class MainTest(unittest.TestCase):
     Run tests on the main process.
     """
 
-    def test_mark_date(self):
+    def test_mark_date(self) -> None:
         """
         Test that we can mark april the 18th.
         """
@@ -311,7 +311,7 @@ class MainTest(unittest.TestCase):
             ],
         )
 
-    def test_parse_args(self):
+    def test_parse_args(self) -> None:
         """
         Test that we correctly parse date in argument parser.
         """
@@ -319,7 +319,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(args.all, False)
         self.assertEqual(args.date, datetime.datetime(2025, 4, 17))
 
-    def test_resolve_one(self):
+    def test_resolve_one(self) -> None:
         """
         Resolve a specific grid.
         """
@@ -341,7 +341,7 @@ class MainTest(unittest.TestCase):
         )
 
     @patch("argparse._sys.argv", ["solver.py", "--date", "2025-04-17"])
-    def test_full_run_single_grid(self):
+    def test_full_run_single_grid(self) -> None:
         """
         Test that we can get a grid solution.
         """
@@ -353,7 +353,7 @@ class MainTest(unittest.TestCase):
     @patch(
         "argparse._sys.argv", ["solver.py", "--all", "--date", "2025-04-17"]
     )
-    def test_full_run_all_grids(self):
+    def test_full_run_all_grids(self) -> None:
         """
         Test that we can get a grid solution.
         """
