@@ -12,10 +12,15 @@ from collections import deque
 from contextlib import contextmanager
 from io import StringIO
 from random import shuffle
+from typing import Any
 from unittest.mock import patch
 
 
-def put_shape(grid, shape: tuple[tuple[int, ...], ...], shape_id) -> None:
+def put_shape(
+    grid: list[list[Any]],
+    shape: tuple[tuple[int, ...], ...],
+    shape_id,
+) -> None:
     """
     Put the shape in the first free grid position.
     """
@@ -39,7 +44,9 @@ def put_shape(grid, shape: tuple[tuple[int, ...], ...], shape_id) -> None:
         next_pos[0] += 1
 
 
-def find_next_cell_with(grid, search=None):
+def find_next_cell_with(
+    grid: list[list[Any]] | tuple[tuple[int, ...], ...], search=None
+):
     """
     Returns the coordinates of the first cell holding `search`.
     """
@@ -91,7 +98,7 @@ def parse_args(args=None):
     return aparser.parse_args(args)
 
 
-def recursive_search(grid, available_pieces):
+def recursive_search(grid: list[list[Any]], available_pieces):
     """
     Recursively search for a solution.
     """
@@ -109,7 +116,7 @@ def recursive_search(grid, available_pieces):
             yield from recursive_search(w_grid, w_avail_pieces)
 
 
-def mark_date(grid, date):
+def mark_date(grid: list[list[Any]], date):
     """
     Return the grid with given month and day reserved.
     """
@@ -120,7 +127,7 @@ def mark_date(grid, date):
     return grid
 
 
-def print_grid(grid) -> None:
+def print_grid(grid: list[list[Any]]) -> None:
     """
     Print the grid on the screen on a human readable way.
     """
@@ -183,7 +190,7 @@ class ShapeTest(unittest.TestCase):
         """
         Test we can find free cell in grids.
         """
-        grid = [[None, None, 1, 1], [None, None, None, None]]
+        grid: list[list[Any]] = [[None, None, 1, 1], [None, None, None, None]]
         self.assertListEqual(find_next_cell_with(grid), [0, 0])
         grid = [[1, None, 1, 1], [None, None, None, None]]
         self.assertListEqual(find_next_cell_with(grid), [0, 1])
@@ -201,7 +208,7 @@ class ShapeTest(unittest.TestCase):
         """
         Test that the piece can fit.
         """
-        grid = [[None, None, 1, 1], [None, None, None, None]]
+        grid: list[list[Any]] = [[None, None, 1, 1], [None, None, None, None]]
         shape = ((1, 1, 0, 0), (0, 1, 1, 1))
         put_shape(grid, shape, "x")
         self.assertListEqual(
@@ -213,7 +220,10 @@ class ShapeTest(unittest.TestCase):
         """
         Test that the piece with an empty first cell in shape can fit.
         """
-        grid = [[1, None, None, None], [None, None, None, None]]
+        grid: list[list[Any]] = [
+            [1, None, None, None],
+            [None, None, None, None],
+        ]
         shape = ((0, 1, 1, 1), (1, 1, 0, 0))
         put_shape(grid, shape, "x")
         self.assertListEqual(
