@@ -151,10 +151,10 @@ class Piece:
         and store it into the object.
         """
         orientations = [self.shape]
-        for _ in range(0, 3):
+        for _ in range(3):
             orientations.append(self.rotate(orientations[-1]))
         orientations.append(self.flip())
-        for _ in range(0, 3):
+        for _ in range(3):
             orientations.append(self.rotate(orientations[-1]))
         self.orientations = set(orientations)
 
@@ -378,7 +378,7 @@ def captured_output():
 
 
 GRID = (
-    [[None] * 6 for _ in range(0, 2)]
+    [[None] * 6 for _ in range(2)]
     + [[None] * 7 for _ in range(2, 6)]
     + [[None] * 3]
 )
