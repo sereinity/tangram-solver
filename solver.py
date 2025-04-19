@@ -24,16 +24,16 @@ def put_shape(grid, shape, shape_id):
     next_pos = free_pos.copy()
     next_pos[1] -= offset
     if next_pos[1] < 0:
-        raise CantPut("Out of bound")
+        raise CantPutError("Out of bound")
     for line in shape:
         for col in line:
             try:
                 if col == 1 and grid[next_pos[0]][next_pos[1]] is not None:
-                    raise CantPut("Not free cell", next_pos)
+                    raise CantPutError("Not free cell", next_pos)
                 if col == 1:
                     grid[next_pos[0]][next_pos[1]] = shape_id
             except IndexError as exc:
-                raise CantPut("Out of bound") from exc
+                raise CantPutError("Out of bound") from exc
             next_pos[1] += 1
         next_pos[1] = free_pos[1] - offset
         next_pos[0] += 1
@@ -100,7 +100,7 @@ def recursive_search(grid, available_pieces):
             w_grid = copy.deepcopy(grid)
             try:
                 put_shape(w_grid, shape, piece.repr)
-            except CantPut:
+            except CantPutError:
                 continue
             w_avail_pieces = available_pieces.copy()
             w_avail_pieces.remove(piece)
@@ -128,7 +128,7 @@ def print_grid(grid):
     deque(map(lambda x: print(" ".join(x)), grid))
 
 
-class CantPut(Exception):
+class CantPutError(Exception):
     """
     Can't put the piece here.
     """
@@ -226,7 +226,7 @@ class ShapeTest(unittest.TestCase):
         """
         grid = [[None, None, None, None], [None, None, None, None]]
         shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
-        with self.assertRaises(CantPut) as exp:
+        with self.assertRaises(CantPutError) as exp:
             put_shape(grid, shape, "x")
         self.assertEqual(exp.exception.args, ("Out of bound",))
 
@@ -236,7 +236,7 @@ class ShapeTest(unittest.TestCase):
         """
         grid = [[None, None, 1, 1], [None, None, None, 1]]
         shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
-        with self.assertRaises(CantPut) as cp:
+        with self.assertRaises(CantPutError) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Not free cell", [1, 3]))
 
@@ -246,7 +246,7 @@ class ShapeTest(unittest.TestCase):
         """
         grid = [[None, None, None], [None, None, None]]
         shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
-        with self.assertRaises(CantPut) as cp:
+        with self.assertRaises(CantPutError) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Out of bound",))
 
