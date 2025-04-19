@@ -9,6 +9,7 @@ import datetime
 import sys
 import unittest
 from collections import deque
+from collections.abc import Generator
 from contextlib import contextmanager
 from io import StringIO
 from random import shuffle
@@ -104,25 +105,9 @@ def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     return aparser.parse_args(args)
 
 
-def recursive_search(grid: list[list[Any]], available_pieces):
-    """
-    Recursively search for a solution.
-    """
-    for piece in available_pieces:
-        for shape in piece.orientations:
-            w_grid = copy.deepcopy(grid)
-            try:
-                put_shape(w_grid, shape, piece.repr)
-            except CantPutError:
-                continue
-            w_avail_pieces = available_pieces.copy()
-            w_avail_pieces.remove(piece)
-            if find_next_cell_with(w_grid) is None:
-                yield w_grid
-            yield from recursive_search(w_grid, w_avail_pieces)
-
-
-def mark_date(grid: list[list[Any]], date: datetime.datetime | datetime.date):
+def mark_date(
+    grid: list[list[Any]], date: datetime.datetime | datetime.date
+) -> list[list[Any]]:
     """
     Return the grid with given month and day reserved.
     """
@@ -185,6 +170,27 @@ class Piece:
         Returns a rotated (90°) version of the given shape.
         """
         return tuple(zip(*shape[::-1]))
+
+
+def recursive_search(
+    grid: list[list[Any]],
+    available_pieces: list[Piece],
+) -> Generator[list[list[Any]]]:
+    """
+    Recursively search for a solution.
+    """
+    for piece in available_pieces:
+        for shape in piece.orientations:
+            w_grid = copy.deepcopy(grid)
+            try:
+                put_shape(w_grid, shape, piece.repr)
+            except CantPutError:
+                continue
+            w_avail_pieces = available_pieces.copy()
+            w_avail_pieces.remove(piece)
+            if find_next_cell_with(w_grid) is None:
+                yield w_grid
+            yield from recursive_search(w_grid, w_avail_pieces)
 
 
 class ShapeTest(unittest.TestCase):
