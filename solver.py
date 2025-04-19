@@ -1,6 +1,6 @@
 #!/bin/env python
 """
-Tangram infinte-calendar solver
+Tangram infinte-calendar solver.
 """
 
 import copy
@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 def put_shape(grid, shape, shape_id):
     """
-    Put the shape in the first free grid position
+    Put the shape in the first free grid position.
     """
     free_pos = find_next_cell_with(grid)
     offset = find_next_cell_with(shape, 1)[1]
@@ -41,7 +41,7 @@ def put_shape(grid, shape, shape_id):
 
 def find_next_cell_with(grid, search=None):
     """
-    Returns the coordinates of the first cell holding `search`
+    Returns the coordinates of the first cell holding `search`.
     """
     for line_no, line in enumerate(grid):
         try:
@@ -54,7 +54,7 @@ def find_next_cell_with(grid, search=None):
 
 def main():
     """
-    perform the recursive search and then print the result
+    Perform the recursive search and then print the result.
     """
     args = parse_args()
     date = args.date if args.date else datetime.date.today()
@@ -73,7 +73,7 @@ def main():
 
 def parse_args(args=None):
     """
-    Create argument parser and return the Namespace object
+    Create argument parser and return the Namespace object.
     """
     aparser = ArgumentParser(description=__doc__)
     aparser.add_argument(
@@ -93,7 +93,7 @@ def parse_args(args=None):
 
 def recursive_search(grid, available_pieces):
     """
-    recursively search for a solution
+    Recursively search for a solution.
     """
     for piece in available_pieces:
         for shape in piece.orientations:
@@ -111,7 +111,7 @@ def recursive_search(grid, available_pieces):
 
 def mark_date(grid, date):
     """
-    Return the grid with given month and day reserved
+    Return the grid with given month and day reserved.
     """
     (line, col) = divmod(date.month - 1, 6)
     grid[line][col] = "□"
@@ -122,7 +122,7 @@ def mark_date(grid, date):
 
 def print_grid(grid):
     """
-    Print the grid on the screen on a human readable way
+    Print the grid on the screen on a human readable way.
     """
     print("".join(["-"] * 13))
     deque(map(lambda x: print(" ".join(x)), grid))
@@ -130,13 +130,13 @@ def print_grid(grid):
 
 class CantPut(Exception):
     """
-    Can't put the piece here
+    Can't put the piece here.
     """
 
 
 class Piece:
     """
-    Piece representation, useful to manipulate it
+    Piece representation, useful to manipulate it.
     """
 
     def __init__(self, shape, prepr):
@@ -148,7 +148,7 @@ class Piece:
     def _generate_orientations(self):
         """
         Compute all possible orientation (flip included) simplify it
-        and store it into the object
+        and store it into the object.
         """
         orientations = [self.shape]
         for _ in range(0, 3):
@@ -160,26 +160,26 @@ class Piece:
 
     def flip(self):
         """
-        Get the current piece in a reversed state
+        Get the current piece in a reversed state.
         """
         return tuple(reversed(self.shape))
 
     @staticmethod
     def rotate(shape):
         """
-        returns a rotated (90°) version of the given shape
+        Returns a rotated (90°) version of the given shape.
         """
         return tuple(zip(*shape[::-1]))
 
 
 class ShapeTest(unittest.TestCase):
     """
-    Test that all pieces have a correct shape
+    Test that all pieces have a correct shape.
     """
 
     def test_find_free_cell(self):
         """
-        Test we can find free cell in grids
+        Test we can find free cell in grids.
         """
         grid = [[None, None, 1, 1], [None, None, None, None]]
         self.assertListEqual(find_next_cell_with(grid), [0, 0])
@@ -190,14 +190,14 @@ class ShapeTest(unittest.TestCase):
 
     def test_cant_find_free_cell(self):
         """
-        Test we can't find free cell in full grids
+        Test we can't find free cell in full grids.
         """
         grid = [[1, 2, 1, 1], [1, 2, 1, 1]]
         self.assertEqual(find_next_cell_with(grid), None)
 
     def test_can_put(self):
         """
-        Test that the piece can fit
+        Test that the piece can fit.
         """
         grid = [[None, None, 1, 1], [None, None, None, None]]
         shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
@@ -209,7 +209,7 @@ class ShapeTest(unittest.TestCase):
 
     def test_can_put_with_blank(self):
         """
-        Test that the piece with an empty first cell in shape can fit
+        Test that the piece with an empty first cell in shape can fit.
         """
         grid = [[1, None, None, None], [None, None, None, None]]
         shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
@@ -222,7 +222,7 @@ class ShapeTest(unittest.TestCase):
     def test_cannot_put_with_negative_offset(self):
         """
         Test that the piece with an empty first cell can't be put in first
-        column
+        column.
         """
         grid = [[None, None, None, None], [None, None, None, None]]
         shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
@@ -232,7 +232,7 @@ class ShapeTest(unittest.TestCase):
 
     def test_cant_put(self):
         """
-        Test that the piece can't fit and is rejected
+        Test that the piece can't fit and is rejected.
         """
         grid = [[None, None, 1, 1], [None, None, None, 1]]
         shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
@@ -242,7 +242,7 @@ class ShapeTest(unittest.TestCase):
 
     def test_cant_put_outside(self):
         """
-        Test that the piece can't be placed outside of the grid
+        Test that the piece can't be placed outside of the grid.
         """
         grid = [[None, None, None], [None, None, None]]
         shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
@@ -252,7 +252,7 @@ class ShapeTest(unittest.TestCase):
 
     def test_flip(self):
         """
-        the flip produces a wanted result
+        The flip produces a wanted result.
         """
         piece = Piece(
             (
@@ -269,7 +269,7 @@ class ShapeTest(unittest.TestCase):
 
     def test_four_rotate(self):
         """
-        rotating four times a piece should give the initial state
+        Rotating four times a piece should give the initial state.
         """
         piece = Piece(
             (
@@ -290,12 +290,12 @@ class ShapeTest(unittest.TestCase):
 
 class MainTest(unittest.TestCase):
     """
-    Run tests on the main process
+    Run tests on the main process.
     """
 
     def test_mark_date(self):
         """
-        Test that we can mark april the 18th
+        Test that we can mark april the 18th.
         """
         grid = mark_date(copy.deepcopy(GRID), datetime.date(2025, 4, 18))
         self.assertEqual(
@@ -312,13 +312,16 @@ class MainTest(unittest.TestCase):
         )
 
     def test_parse_args(self):
+        """
+        Test that we correctly parse date in argument parser.
+        """
         args = parse_args(["--date", "2025-04-17"])
         self.assertEqual(args.all, False)
         self.assertEqual(args.date, datetime.datetime(2025, 4, 17))
 
     def test_resolve_one(self):
         """
-        resolve a specific grid
+        Resolve a specific grid.
         """
         date = datetime.date(2025, 4, 18)
         grid = copy.deepcopy(GRID)
@@ -340,7 +343,7 @@ class MainTest(unittest.TestCase):
     @patch("argparse._sys.argv", ["solver.py", "--date", "2025-04-17"])
     def test_full_run_single_grid(self):
         """
-        Test that we can get a grid solution
+        Test that we can get a grid solution.
         """
         with captured_output() as (out, err):
             main()
@@ -352,7 +355,7 @@ class MainTest(unittest.TestCase):
     )
     def test_full_run_all_grids(self):
         """
-        Test that we can get a grid solution
+        Test that we can get a grid solution.
         """
         with captured_output() as (out, err):
             main()
@@ -362,6 +365,9 @@ class MainTest(unittest.TestCase):
 
 @contextmanager
 def captured_output():
+    """
+    Patch tool that help capturing stdout/stderr during tests.
+    """
     new_out, new_err = StringIO(), StringIO()
     old_out, old_err = sys.stdout, sys.stderr
     try:
