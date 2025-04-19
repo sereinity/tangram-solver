@@ -15,7 +15,7 @@ from random import shuffle
 from unittest.mock import patch
 
 
-def put_shape(grid, shape, shape_id) -> None:
+def put_shape(grid, shape: tuple[tuple[int, ...], ...], shape_id) -> None:
     """
     Put the shape in the first free grid position.
     """
@@ -139,10 +139,10 @@ class Piece:
     Piece representation, useful to manipulate it.
     """
 
-    def __init__(self, shape, prepr) -> None:
+    def __init__(self, shape: tuple[tuple[int, ...], ...], prepr) -> None:
         self.shape = shape
         self.repr = prepr
-        self.orientations = set()
+        self.orientations: set[tuple[tuple[int, ...], ...]] = set()
         self._generate_orientations()
 
     def _generate_orientations(self) -> None:
@@ -158,14 +158,16 @@ class Piece:
             orientations.append(self.rotate(orientations[-1]))
         self.orientations = set(orientations)
 
-    def flip(self):
+    def flip(self) -> tuple[tuple[int, ...], ...]:
         """
         Get the current piece in a reversed state.
         """
         return tuple(reversed(self.shape))
 
     @staticmethod
-    def rotate(shape):
+    def rotate(
+        shape: tuple[tuple[int, ...], ...],
+    ) -> tuple[tuple[int, ...], ...]:
         """
         Returns a rotated (90°) version of the given shape.
         """
@@ -200,7 +202,7 @@ class ShapeTest(unittest.TestCase):
         Test that the piece can fit.
         """
         grid = [[None, None, 1, 1], [None, None, None, None]]
-        shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
+        shape = ((1, 1, 0, 0), (0, 1, 1, 1))
         put_shape(grid, shape, "x")
         self.assertListEqual(
             [["x", "x", 1, 1], [None, "x", "x", "x"]],
@@ -212,7 +214,7 @@ class ShapeTest(unittest.TestCase):
         Test that the piece with an empty first cell in shape can fit.
         """
         grid = [[1, None, None, None], [None, None, None, None]]
-        shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
+        shape = ((0, 1, 1, 1), (1, 1, 0, 0))
         put_shape(grid, shape, "x")
         self.assertListEqual(
             [[1, "x", "x", "x"], ["x", "x", None, None]],
@@ -225,7 +227,7 @@ class ShapeTest(unittest.TestCase):
         column.
         """
         grid = [[None, None, None, None], [None, None, None, None]]
-        shape = [[0, 1, 1, 1], [1, 1, 0, 0]]
+        shape = ((0, 1, 1, 1), (1, 1, 0, 0))
         with self.assertRaises(CantPutError) as exp:
             put_shape(grid, shape, "x")
         self.assertEqual(exp.exception.args, ("Out of bound",))
@@ -235,7 +237,7 @@ class ShapeTest(unittest.TestCase):
         Test that the piece can't fit and is rejected.
         """
         grid = [[None, None, 1, 1], [None, None, None, 1]]
-        shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
+        shape = ((1, 1, 0, 0), (0, 1, 1, 1))
         with self.assertRaises(CantPutError) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Not free cell", [1, 3]))
@@ -245,7 +247,7 @@ class ShapeTest(unittest.TestCase):
         Test that the piece can't be placed outside of the grid.
         """
         grid = [[None, None, None], [None, None, None]]
-        shape = [[1, 1, 0, 0], [0, 1, 1, 1]]
+        shape = ((1, 1, 0, 0), (0, 1, 1, 1))
         with self.assertRaises(CantPutError) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Out of bound",))
