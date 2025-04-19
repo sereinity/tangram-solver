@@ -410,7 +410,7 @@ class MainTest(unittest.TestCase):
 
 
 @contextmanager
-def captured_output():
+def captured_output() -> Generator[tuple[StringIO, StringIO]]:
     """
     Patch tool that help capturing stdout/stderr during tests.
     """
