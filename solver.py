@@ -25,8 +25,13 @@ def put_shape(
     Put the shape in the first free grid position.
     """
     free_pos = find_next_cell_with(grid)
-    offset = find_next_cell_with(shape, 1)[1]
-    next_pos = free_pos.copy()
+    if free_pos is None:
+        raise CantPutError('Grid is full')
+    if (first_pos := find_next_cell_with(shape, 1)) is not None:
+        offset = first_pos[1]
+    else:
+        raise CantPutError('This piece is made of emptiness')
+    next_pos = list(free_pos)
     next_pos[1] -= offset
     if next_pos[1] < 0:
         raise CantPutError("Out of bound")
@@ -47,14 +52,14 @@ def put_shape(
 def find_next_cell_with(
     grid: list[list[Any]] | tuple[tuple[int, ...], ...],
     search: str | int | None = None,
-):
+) -> tuple[int, int] | None:
     """
     Returns the coordinates of the first cell holding `search`.
     """
     for line_no, line in enumerate(grid):
         try:
             col_no = line.index(search)
-            return [line_no, col_no]
+            return (line_no, col_no)
         except ValueError:
             pass
     return None
@@ -192,11 +197,11 @@ class ShapeTest(unittest.TestCase):
         Test we can find free cell in grids.
         """
         grid: list[list[Any]] = [[None, None, 1, 1], [None, None, None, None]]
-        self.assertListEqual(find_next_cell_with(grid), [0, 0])
+        self.assertEqual(find_next_cell_with(grid), (0, 0))
         grid = [[1, None, 1, 1], [None, None, None, None]]
-        self.assertListEqual(find_next_cell_with(grid), [0, 1])
+        self.assertEqual(find_next_cell_with(grid), (0, 1))
         grid = [[1, 1, 1, 1], [1, None, None, None]]
-        self.assertListEqual(find_next_cell_with(grid), [1, 1])
+        self.assertEqual(find_next_cell_with(grid), (1, 1))
 
     def test_cant_find_free_cell(self) -> None:
         """
@@ -262,6 +267,28 @@ class ShapeTest(unittest.TestCase):
         with self.assertRaises(CantPutError) as cp:
             put_shape(grid, shape, "x")
         self.assertEqual(cp.exception.args, ("Out of bound",))
+
+    def test_put_on_full_grid(self) -> None:
+        """
+        Test putting a piece on a full grid
+        """
+        grid = [['y', 'y', 'y'], ['y', 'y', 'y']]
+        shape = ((1, 1, 0, 0), (0, 1, 1, 1))
+        with self.assertRaises(CantPutError) as cp:
+            put_shape(grid, shape, "x")
+        self.assertEqual(cp.exception.args, ("Grid is full",))
+
+    def test_put_empty_piece(self) -> None:
+        """
+        Test putting an empty piece on the grid
+        """
+        grid = [[None, None, None], [None, None, None]]
+        shape = ((0, 0, 0, 0), (0, 0, 0, 0))
+        with self.assertRaises(CantPutError) as cp:
+            put_shape(grid, shape, "x")
+        self.assertEqual(
+            cp.exception.args, ("This piece is made of emptiness",)
+        )
 
     def test_flip(self) -> None:
         """
