@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 from collections import deque
 from contextlib import contextmanager
 from io import StringIO
+from random import shuffle
 from unittest.mock import patch
 
 
@@ -58,14 +59,16 @@ def main():
     args = parse_args()
     date = args.date if args.date else datetime.date.today()
     grid = copy.deepcopy(GRID)
+    pieces = copy.deepcopy(PIECES)
     mark_date(grid, date)
     if args.all:
         item_id = 0
-        for item_id, solution in enumerate(recursive_search(grid, PIECES)):
+        for item_id, solution in enumerate(recursive_search(grid, pieces)):
             print_grid(solution)
         print(f"Found {item_id + 1} solutions")
     else:
-        print_grid(next(recursive_search(grid, PIECES)))
+        shuffle(pieces)
+        print_grid(next(recursive_search(grid, pieces)))
 
 
 def parse_args(args=None):
