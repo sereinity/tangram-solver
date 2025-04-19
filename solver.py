@@ -19,7 +19,7 @@ from unittest.mock import patch
 def put_shape(
     grid: list[list[Any]],
     shape: tuple[tuple[int, ...], ...],
-    shape_id,
+    shape_id: str,
 ) -> None:
     """
     Put the shape in the first free grid position.
@@ -45,7 +45,8 @@ def put_shape(
 
 
 def find_next_cell_with(
-    grid: list[list[Any]] | tuple[tuple[int, ...], ...], search=None
+    grid: list[list[Any]] | tuple[tuple[int, ...], ...],
+    search: str | int | None = None,
 ):
     """
     Returns the coordinates of the first cell holding `search`.
@@ -116,7 +117,7 @@ def recursive_search(grid: list[list[Any]], available_pieces):
             yield from recursive_search(w_grid, w_avail_pieces)
 
 
-def mark_date(grid: list[list[Any]], date):
+def mark_date(grid: list[list[Any]], date: datetime.datetime | datetime.date):
     """
     Return the grid with given month and day reserved.
     """
@@ -146,7 +147,7 @@ class Piece:
     Piece representation, useful to manipulate it.
     """
 
-    def __init__(self, shape: tuple[tuple[int, ...], ...], prepr) -> None:
+    def __init__(self, shape: tuple[tuple[int, ...], ...], prepr: str) -> None:
         self.shape = shape
         self.repr = prepr
         self.orientations: set[tuple[tuple[int, ...], ...]] = set()
