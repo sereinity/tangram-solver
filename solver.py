@@ -6,13 +6,13 @@ Tangram infinte-calendar solver.
 import argparse
 import copy
 import datetime
+import random
 import sys
 import unittest
 from collections import deque
 from collections.abc import Generator
 from contextlib import contextmanager
 from io import StringIO
-from random import shuffle
 from typing import Any
 from unittest.mock import patch
 
@@ -81,7 +81,8 @@ def main() -> None:
             print_grid(solution)
         print(f"Found {item_id + 1} solutions")
     else:
-        shuffle(pieces)
+        random.shuffle(pieces)
+        deque(map(lambda x: x.shuffle(), pieces))
         print_grid(next(recursive_search(grid, pieces)))
 
 
@@ -161,6 +162,14 @@ class Piece:
         Get the current piece in a reversed state.
         """
         return tuple(reversed(self.shape))
+
+    def shuffle(self) -> None:
+        """
+        Shuffle orientations
+        """
+        self.orientations = set(
+            random.sample(sorted(self.orientations), k=len(self.orientations))
+        )
 
     @staticmethod
     def rotate(
